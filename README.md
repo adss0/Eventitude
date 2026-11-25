@@ -1,103 +1,143 @@
-# Eventitude
+# Eventitude 🎟️
 
-Eventitude is an intuitive platform designed to help users create, manage, and discover events effortlessly. Whether you're planning a small gathering, hosting a large conference, or simply looking to explore events in your area, Eventitude empowers users with tools to organize and engage with events seamlessly. With features for posting, editing, and deleting events, saving drafts, asking questions, and searching for events, Eventitude is your all-in-one event management solution.
+**A full-stack events platform. Create and publish events, let people register and ask questions, vote the best questions to the top, and find events with keyword search. Built with Vue 3 on the front and a Node.js / Express REST API with SQLite on the back.**
 
----
-
-## Key Features
-
-- Event Management:  
-  Post, edit, update, and delete events with ease.
-
-- Save Drafts:  
-  Save event drafts or question drafts to work on them later before publishing.
-
-- Interactive Q&A:  
-  Allow users to ask and answer questions related to events.
-
-- User Authentication:  
-  Login and logout securely to manage your events and account.
-
-- Event Search:  
-  Search for events by keyword, category, or location to discover what’s happening around you.
-
-- Responsive Design:  
-  Accessible and optimized for all devices, including desktops, tablets, and mobile phones.
-
-- Profanity filters:  
-  Ensures that the content within the platform remains clean and appropriate for all users.
+> 🎓 Built for the Full Stack Web Development module (2024/25). The API was written on top of the module's starter project, and is checked by a suite of 116 automated Mocha/Chai tests.
 
 ---
 
-### Setup Instructions
+## Why Eventitude?
 
-#### Prerequisites
+Organising an event usually means juggling a sign-up form, an email thread for questions and a spreadsheet of who's coming. Eventitude puts all of that in one place:
 
-Node.js (v14 or higher)
-
-npm (Node Package Manager)
-
-#### Steps to Run the Project
-
-1. Clone the repository
-   `git clone https://github.com/adss0/Eventitude`
-   `cd Eventitude`
-
-2. Install Dependencies:
-
-   - backend:
-     `cd backend`
-     `npm install`
-   - frontend:
-     `cd frontend`
-     `cd vue-project`
-     `npm install`
-
-3. Start the Server:
-
-   - backend server:
-     `cd backend`
-     `npm run dev`
-   - frontend server:
-     `cd frontend/vue-project`
-     `npm run dev`
-
-4. Access the Application:
-
-- The backend server runs on:
-  `http://localhost:3333/`
-
-- The frontend server runs on:
-  `http://localhost:5173/`
+- 🗓️ **Organisers** publish an event once, then edit it, close it or delete it whenever they need to.
+- 🙋 **Attendees** register in one click and can ask the organiser questions in public.
+- 👍 **Everyone** votes on questions, so the most useful ones rise to the top.
+- 🧹 **Clean content.** Event details and questions run through a profanity filter before they're saved.
 
 ---
 
-## Usage
+## How it works
 
-1. Publish events
+```
+ ┌────────────────────────┐   fetch (JSON)    ┌────────────────────────┐        ┌──────────┐
+ │ Vue 3 single-page app  │ ───────────────▶  │ Express REST API       │ ─────▶ │  SQLite  │
+ │ Vue Router · Vite      │ ◀───────────────  │ auth · validation      │ ◀───── │ db.sqlite│
+ │ localhost:5173         │  X-Authorization  │ localhost:3333         │        └──────────┘
+ └────────────────────────┘   session token   └────────────────────────┘
+```
 
-- Users can create and publish events by providing event details like name, location, date, and description.
-
-- The system will also filter any inappropriate language.
-
-2. Register for events
-
-- Users can register for events they are interested. 
-
-3. Ask questions
-
-- Users can ask questions related to events they are attending or are interested in.
-
-- Questions can be upvoted and downvoted by users.
-
-4. Save local drafts
-
-- Users have the option to save events or questions as drafts, allowing them to work on event details without publishing them immediately.
+1. **Sign up and log in.** Passwords are hashed with a random salt (PBKDF2). Logging in returns a session token, which the app sends with every request that needs you to be signed in.
+2. **Publish an event.** Give it a name, description, location, start date, registration closing date and a maximum number of attendees. Not ready yet? Save it as a **draft** in your browser and come back to it later.
+3. **Register.** Other users sign up to your event until it's full or registration closes.
+4. **Ask and vote.** Attendees ask questions on the event page (questions can be drafted too), and everyone can upvote or downvote them.
+5. **Search.** Find events by keyword, and filter them to *my events*, *attending*, *open*, *archive* or *all events*.
 
 ---
 
-## License 📄
+## Features
+
+| | Feature |
+|---|---|
+| ✏️ | Create, edit and delete events |
+| 💾 | Save event and question drafts locally before publishing |
+| ✅ | Register for events, with capacity and closing-date limits |
+| ❓ | Public Q&A on every event |
+| 👍 | Upvote and downvote questions |
+| 🔍 | Keyword search with status filters (my events, attending, open, archive, all) |
+| 🔐 | Sign up, log in and log out with salted, hashed passwords and session tokens |
+| 🧹 | Profanity filter on event details and questions |
+| 📱 | Responsive layout for desktop, tablet and mobile |
+
+---
+
+## Tech stack
+
+| Area | Technology |
+|---|---|
+| Frontend | Vue 3 · Vue Router · Vite · Font Awesome |
+| Backend | Node.js · Express · Joi (validation) · leo-profanity |
+| Database | SQLite |
+| Testing | Mocha · Chai · chai-http |
+
+### Project structure
+
+```
+BackEnd/
+  server.js            ← Starts the API on port 3333
+  database.js          ← Creates the SQLite tables
+  app/
+    routes/            ← URL → controller (users, events, questions)
+    controllers/       ← Request handling and validation
+    models/            ← SQL queries
+    lib/               ← Authentication middleware
+  tests/               ← Mocha test suite (a → j, run in order)
+
+FrontEnd/vue-project/src/
+  router/              ← Page routes
+  services/            ← Calls to the API
+  views/pages/         ← One component per page
+```
+
+---
+
+## Getting started
+
+**Requirements:** Node.js 18+ and npm
+
+```bash
+git clone https://github.com/adss0/Eventitude.git
+cd Eventitude
+```
+
+```bash
+# 1. Backend (API on http://localhost:3333)
+cd BackEnd
+npm install
+npm run dev
+```
+
+```bash
+# 2. Frontend (in a second terminal, app on http://localhost:5173)
+cd FrontEnd/vue-project
+npm install
+npm run dev
+```
+
+Open <http://localhost:5173>, sign up, and create your first event.
+
+> The folder names are `BackEnd` and `FrontEnd` with capital letters. On macOS and Linux the `cd` commands must match exactly.
+
+### Running the tests
+
+With the backend running, open another terminal in `BackEnd/`:
+
+```bash
+npm run wipe   # reset the database (the tests expect a fresh one)
+npm test       # run the API test suite
+```
+
+---
+
+## API overview
+
+| Method | Endpoint | What it does | Sign-in needed |
+|---|---|---|---|
+| POST | `/users` | Create an account | |
+| POST | `/login` | Log in and get a session token | |
+| POST | `/logout` | Log out | ✅ |
+| POST | `/events` | Create an event | ✅ |
+| GET | `/event/:event_id` | Get an event's details | |
+| PATCH | `/event/:event_id` | Update an event | ✅ |
+| POST | `/event/:event_id` | Register for an event | ✅ |
+| DELETE | `/event/:event_id` | Delete (archive) an event | ✅ |
+| GET | `/search?q=&status=` | Search events | |
+| POST | `/event/:event_id/question` | Ask a question | ✅ |
+| DELETE | `/question/:question_id` | Delete a question | ✅ |
+| POST / DELETE | `/question/:question_id/vote` | Upvote / downvote a question | ✅ |
+
+---
+
+## License
 
 This project is licensed under the MIT License.
-
----
